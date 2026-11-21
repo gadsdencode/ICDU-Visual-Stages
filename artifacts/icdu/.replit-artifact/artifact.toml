@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ICDU · AI Guided by Intent"
+description = "A frontend-only, cinematic static SVG stage explaining the Intent-Conscious Data Unit through Define, Gate, Execute and Audit."
+version = "1.0.0"
+id = "artifacts/icdu"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20945
+
+[services.development]
+run = "pnpm --filter @workspace/icdu run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/icdu", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/icdu/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20945"
+BASE_PATH = "/"
