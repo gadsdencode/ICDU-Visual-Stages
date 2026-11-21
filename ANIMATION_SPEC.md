@@ -17,3 +17,14 @@ Create a lightweight, frontend-only Vite + React + TypeScript + Tailwind CSS app
 ## First pass
 
 Build ONLY the static, full-bleed dark-mode SVG stage with all 4 stations, the Quarantine node, the Overhead Lineage Arc, and SVG glow filters. Do NOT add animations or bottom controls yet—focus 100% on visual craft, spacing, lighting, and keynote typography.
+
+## Compliant (Pass) flow — second pass
+
+The static-only restriction above applied to the first pass. Auto-play a smooth, continuously looping 14-second GSAP master timeline:
+
+1. DEFINE (0–3.5s): 16 chaotic raw-prompt particles converge into a glowing cyan hexagonal Intent Capsule; GOAL, RULES, and CRITERIA rings snap into place.
+2. GATE (3.5–7s): Capsule pauses for an amber vertical laser sweep; beam turns emerald, iris shutters open, and capsule accelerates forward.
+3. EXECUTE (7–10.5s): Capsule enters the model core, cyan brackets clamp inward, core pulses, and internal energy arcs circulate.
+4. AUDIT (10.5–14s): Output and synchronized pulses along both lineage arcs converge at AUDIT, forging an emerald seal with a stamp ripple.
+
+Cross-fade the top-left Act headline at every phase. Remain frontend-only with no bottom controls.

@@ -1,3 +1,6 @@
+import { useLayoutEffect, useRef } from 'react';
+import { createPassTimeline } from './passTimeline';
+
 const C = '#38BDF8';
 const E = '#10B981';
 const A = '#F59E0B';
@@ -49,9 +52,15 @@ function StationLabel({ x, n, name, sub, color }: { x: number; n: string; name: 
 }
 
 export default function Stage() {
+  const stage = useRef<SVGSVGElement>(null);
+  useLayoutEffect(() => {
+    if (!stage.current) return;
+    return createPassTimeline(stage.current);
+  }, []);
   const ticks = Array.from({ length: 72 }, (_, i) => i * 5);
   return (
     <svg
+      ref={stage}
       viewBox="0 0 1440 810"
       preserveAspectRatio="xMidYMid meet"
       className="block h-full w-full"
@@ -175,15 +184,19 @@ export default function Stage() {
         <text x="82" y="64" dominantBaseline="middle" fontFamily={MONO} fontSize={11} letterSpacing={3.2} fill={C} fillOpacity={0.9}>
           ICDU · INTENT-CONSCIOUS DATA UNIT
         </text>
-        <text x="64" y="128" fontFamily={SANS} fontSize={46} fontWeight={300} letterSpacing={-1.2} fill={INK}>
-          AI, guided by{' '}
-          <tspan fontFamily={SERIF} fontStyle="italic" fontSize={54} fontWeight={400} letterSpacing={0} fill={C}>
-            intent.
-          </tspan>
-        </text>
-        <text x="64" y="160" fontFamily={MONO} fontSize={11} letterSpacing={1.6} fill={DIM}>
-          ACT I — EVERY PROMPT IS DEFINED, GATED, EXECUTED, AND SEALED
-        </text>
+        {[
+          ['AI, guided by ', 'intent.', 'ACT I — DEFINE · GOAL, RULES, CRITERIA'],
+          ['Every intent, ', 'verified.', 'ACT II — GATE · SCAN, VERIFY, RELEASE'],
+          ['Intelligence, ', 'contained.', 'ACT III — EXECUTE · ANY MODEL, WITHIN GUARDRAILS'],
+          ['Every outcome, ', 'accountable.', 'ACT IV — AUDIT · LINEAGE BECOMES EVIDENCE'],
+        ].map(([lead, emphasis, caption], i) => (
+          <g key={caption} className={`act act-${i}`} opacity={i === 0 ? 1 : 0}>
+            <text x="64" y="128" fontFamily={SANS} fontSize={46} fontWeight={300} letterSpacing={-1.2} fill={INK}>
+              {lead}<tspan fontFamily={SERIF} fontStyle="italic" fontSize={54} fill={i === 3 ? E : C}>{emphasis}</tspan>
+            </text>
+            <text x="64" y="160" fontFamily={MONO} fontSize={11} letterSpacing={1.6} fill={DIM}>{caption}</text>
+          </g>
+        ))}
       </g>
 
       {/* Frame registration marks */}
@@ -199,8 +212,8 @@ export default function Stage() {
       {/* Overhead Lineage Arc */}
       <g fill="none">
         <path d="M310,315 C450,150 1070,150 1210,315" stroke="url(#lineage)" strokeOpacity="0.35" strokeWidth="5" filter="url(#bloom)" />
-        <path d="M310,315 C450,150 1070,150 1210,315" stroke="url(#lineage)" strokeWidth="1" />
-        <path d="M610,315 C740,220 1080,220 1210,315" stroke="url(#lineage)" strokeWidth="1" strokeDasharray="1 5" strokeLinecap="round" />
+        <path id="lineage-define" d="M310,315 C450,150 1070,150 1210,315" stroke="url(#lineage)" strokeWidth="1" />
+        <path id="lineage-gate" d="M610,315 C740,220 1080,220 1210,315" stroke="url(#lineage)" strokeWidth="1" strokeDasharray="1 5" strokeLinecap="round" />
         {[[310, 315], [610, 315]].map(([x, y]) => (
           <g key={x}>
             <circle cx={x} cy={y} r="3" fill={C} filter="url(#glowSoft)" />
@@ -208,8 +221,9 @@ export default function Stage() {
           </g>
         ))}
         <circle cx="1210" cy="315" r="3.5" fill={E} filter="url(#glowHard)" />
-        {/* in-flight lineage packet (static) */}
-        <circle cx="760" cy="191" r="2.4" fill="#E0F5FF" filter="url(#glowHard)" />
+        <circle className="lineage-pulse lineage-define" r="4" fill="#E0F5FF" filter="url(#glowHard)" opacity="0" />
+        <circle className="lineage-pulse lineage-gate" r="4" fill={E} filter="url(#glowHard)" opacity="0" />
+        <circle className="lineage-drop" cx="1210" cy="315" r="5" fill={E} filter="url(#glowHard)" opacity="0" />
       </g>
       <text x="760" y="176" textAnchor="middle" fontFamily={MONO} fontSize={10} letterSpacing={3} fill={C} fillOpacity={0.75}>
         LINEAGE · INTENT → EVIDENCE
@@ -221,8 +235,8 @@ export default function Stage() {
 
       {/* Input Stream */}
       <g>
-        {PARTICLES.map(([x, y, r, o], i) => (
-          <circle key={i} cx={x} cy={y} r={r} fill={i % 5 === 0 ? INK : C} fillOpacity={o} filter={r > 2 ? 'url(#glowSoft)' : undefined} />
+        {PARTICLES.slice(0, 16).map(([x, y, r], i) => (
+          <circle className="raw-particle" key={i} cx={x} cy={y} r={r + 0.7} fill={i % 5 === 0 ? INK : C} filter="url(#glowSoft)" />
         ))}
         <path d="M60 300 L60 292 L68 292" stroke={DIM} strokeOpacity="0.5" fill="none" />
         <text x="60" y="280" fontFamily={MONO} fontSize={10} letterSpacing={2.4} fill={DIM}>
@@ -258,9 +272,9 @@ export default function Stage() {
         <path d={arc(310, 405, 56, 300, 350)} stroke="#E0F5FF" strokeOpacity="0.5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
 
         {/* micro-arcs */}
-        <path d={arc(310, 405, 82, -62, 62)} stroke={C} strokeOpacity="0.9" strokeWidth="1.25" fill="none" strokeLinecap="round" />
-        <path d={arc(310, 405, 94, 28, 152)} stroke={C} strokeOpacity="0.6" strokeWidth="1" fill="none" strokeLinecap="round" />
-        <path d={arc(310, 405, 106, 208, 332)} stroke={C} strokeOpacity="0.4" strokeWidth="1" fill="none" strokeLinecap="round" strokeDasharray="3 3" />
+        <path className="intent-ring" d={arc(310, 405, 82, -62, 62)} stroke={C} strokeOpacity="0.9" strokeWidth="1.25" fill="none" strokeLinecap="round" />
+        <path className="intent-ring" d={arc(310, 405, 94, 28, 152)} stroke={C} strokeOpacity="0.6" strokeWidth="1" fill="none" strokeLinecap="round" />
+        <path className="intent-ring" d={arc(310, 405, 106, 208, 332)} stroke={C} strokeOpacity="0.4" strokeWidth="1" fill="none" strokeLinecap="round" strokeDasharray="3 3" />
         <g fontFamily={MONO} fontSize={9} letterSpacing={3} fill={C}>
           <text dy="-5">
             <textPath href="#arcGoal" startOffset="50%" textAnchor="middle" fillOpacity="0.95">GOAL</textPath>
@@ -290,23 +304,29 @@ export default function Stage() {
         ))}
         {/* iris shutters */}
         <g>
+          <g className="shutter-top">
           <path d="M592 305 H628 L622 340 H598 Z" fill="url(#blade)" stroke="#9FB4CC" strokeOpacity="0.4" />
           <path d="M598 340 H622" stroke={C} strokeOpacity="0.9" filter="url(#glowSoft)" />
           <path d="M598 318 L610 330 L622 318" stroke="#9FB4CC" strokeOpacity="0.35" fill="none" />
+          </g>
+          <g className="shutter-bottom">
           <path d="M592 505 H628 L622 470 H598 Z" fill="url(#blade)" stroke="#9FB4CC" strokeOpacity="0.4" />
           <path d="M598 470 H622" stroke={C} strokeOpacity="0.9" filter="url(#glowSoft)" />
           <path d="M598 492 L610 480 L622 492" stroke="#9FB4CC" strokeOpacity="0.35" fill="none" />
+          </g>
           <circle cx="592" cy="312" r="1.6" fill="#9FB4CC" fillOpacity="0.6" />
           <circle cx="628" cy="312" r="1.6" fill="#9FB4CC" fillOpacity="0.6" />
           <circle cx="592" cy="498" r="1.6" fill="#9FB4CC" fillOpacity="0.6" />
           <circle cx="628" cy="498" r="1.6" fill="#9FB4CC" fillOpacity="0.6" />
         </g>
-        {/* laser scanline (static) */}
+        <g className="scan-beam" opacity="0">
         <rect x="556" y="394" width="108" height="10" fill={A} fillOpacity="0.12" filter="url(#bloom)" />
-        <line x1="560" y1="398" x2="660" y2="398" stroke="url(#scan)" strokeWidth="1.5" filter="url(#glowHard)" />
+        <line className="scan-light" x1="560" y1="398" x2="660" y2="398" stroke={A} strokeWidth="2" filter="url(#glowHard)" />
         <line x1="590" y1="402" x2="630" y2="402" stroke={A} strokeOpacity="0.35" />
         <text x="668" y="401" fontFamily={MONO} fontSize={9} letterSpacing={2} fill={A} fillOpacity="0.9">SCAN</text>
         <text x="552" y="401" textAnchor="end" fontFamily={MONO} fontSize={9} letterSpacing={1.5} fill={A} fillOpacity="0.55">0.973</text>
+        </g>
+        <text className="gate-pass" opacity="0" x="650" y="410" fill={E} fontFamily={MONO} fontSize="10" letterSpacing="2">PASS</text>
         <text x="610" y="296" textAnchor="middle" fontFamily={MONO} fontSize={9} letterSpacing={2} fill={DIM}>APERTURE 180</text>
       </g>
       <StationLabel x={610} n="02" name="GATE" sub="out-of-policy intent stops" color={A} />
@@ -337,7 +357,12 @@ export default function Stage() {
         {/* static neural pulse rings */}
         <circle cx="910" cy="405" r="100" fill="none" stroke={C} strokeOpacity="0.08" />
         <circle cx="910" cy="405" r="88" fill="none" stroke={C} strokeOpacity="0.16" />
-        <circle cx="910" cy="405" r="64" fill="url(#core)" stroke={C} strokeWidth="1.25" filter="url(#glowSoft)" />
+        <circle className="model-core" cx="910" cy="405" r="64" fill="url(#core)" stroke={C} strokeWidth="1.25" filter="url(#glowSoft)" />
+        <g className="energy-arcs" opacity="0" fill="none" stroke={C} strokeWidth="2" filter="url(#glowSoft)">
+          <path d={arc(910, 405, 48, 0, 85)} />
+          <path d={arc(910, 405, 48, 180, 265)} />
+          <path d={arc(910, 405, 35, 85, 160)} stroke="#E0F5FF" />
+        </g>
         {/* neural lattice */}
         <g stroke="#E0F5FF" strokeOpacity="0.35" strokeWidth="0.75">
           {[[-30, -22], [24, -34], [36, 10], [8, 34], [-34, 18], [-6, -4]].map(([x, y], i, arr) =>
@@ -353,24 +378,24 @@ export default function Stage() {
         </text>
         {/* containment brackets */}
         <g fill="#0B1220" stroke={C} strokeWidth="1.25" strokeLinejoin="miter">
-          <path d="M836 317 H806 V493 H836 V481 H818 V329 H836 Z" />
-          <path d="M984 317 H1014 V493 H984 V481 H1002 V329 H984 Z" />
+          <path className="bracket-left" d="M836 317 H806 V493 H836 V481 H818 V329 H836 Z" />
+          <path className="bracket-right" d="M984 317 H1014 V493 H984 V481 H1002 V329 H984 Z" />
         </g>
         <g stroke={C} strokeOpacity="0.5">
-          <path d="M806 370 L796 380 V430 L806 440" fill="none" />
-          <path d="M1014 370 L1024 380 V430 L1014 440" fill="none" />
+          <path className="bracket-left" d="M806 370 L796 380 V430 L806 440" fill="none" />
+          <path className="bracket-right" d="M1014 370 L1024 380 V430 L1014 440" fill="none" />
         </g>
         <g fill={C}>
-          <rect x="809" y="320" width="6" height="2" />
-          <rect x="809" y="488" width="6" height="2" />
-          <rect x="1005" y="320" width="6" height="2" />
-          <rect x="1005" y="488" width="6" height="2" />
+          <rect className="bracket-left" x="809" y="320" width="6" height="2" />
+          <rect className="bracket-left" x="809" y="488" width="6" height="2" />
+          <rect className="bracket-right" x="1005" y="320" width="6" height="2" />
+          <rect className="bracket-right" x="1005" y="488" width="6" height="2" />
         </g>
       </g>
       <StationLabel x={910} n="03" name="EXECUTE" sub="any model, contained" color={C} />
 
       {/* STATION 4 — AUDIT */}
-      <g>
+      <g className="audit-seal">
         <circle cx="1210" cy="405" r="84" fill={E} fillOpacity="0.12" filter="url(#bloom)" />
         <polygon points={hex(1210, 405, 80)} fill="none" stroke={E} strokeOpacity="0.2" strokeDasharray="2 4" />
         <polygon points={hex(1210, 405, 68)} fill="url(#sealGlass)" stroke={E} strokeWidth="1.5" filter="url(#glowSoft)" />
@@ -388,6 +413,16 @@ export default function Stage() {
         <text x="1300" y="415" fontFamily={MONO} fontSize={9} letterSpacing={1} fill={DIM}>14:02:37.418Z</text>
       </g>
       <StationLabel x={1210} n="04" name="AUDIT" sub="evidence, sealed" color={E} />
+      <circle className="stamp-ripple" cx="1210" cy="405" r="68" fill="none" stroke={E} strokeWidth="2" opacity="0" />
+      <g className="intent-capsule" opacity="0" filter="url(#glowHard)">
+        <polygon points={hex(310, 405, 24)} fill="#092B3D" stroke={C} strokeWidth="2" />
+        <polygon points={hex(310, 405, 15)} fill={C} fillOpacity="0.18" stroke="#B7EBFF" strokeWidth="0.75" />
+        <path d="M302 405h16M310 397v16" stroke="#E0F5FF" />
+      </g>
+      <g className="output-packet" opacity="0" filter="url(#glowHard)">
+        <polygon points={hex(910, 405, 19)} fill="#07372D" stroke={E} strokeWidth="2" />
+        <path d="M902 405l6 6 11-13" fill="none" stroke="#D1FAE5" strokeWidth="2" />
+      </g>
 
       {/* Footer */}
       <g fontFamily={MONO} fontSize={10} letterSpacing={2}>
