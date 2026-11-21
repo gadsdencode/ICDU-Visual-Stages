@@ -23,6 +23,47 @@ body {
   color: #e6edf5;
 }
 
+.playback-pill {
+  position: fixed;
+  z-index: 10;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  padding: 12px 18px;
+  border: 1px solid #ffffff1c;
+  border-radius: 999px;
+  background: #0b121cbb;
+  box-shadow: 0 8px 32px #0006;
+  font-size: 11px;
+}
+.playback-pill button { cursor: pointer; border: 0; color: #8b9bac; background: transparent; }
+.playback-pill button:hover { color: #e6edf5; }
+.playback-pill button:focus-visible, .chapter-scrubber:focus-visible { outline: 2px solid #38bdf8; outline-offset: 4px; }
+.playback-button { display: grid; place-items: center; width: 28px; height: 30px; flex-shrink: 0; }
+.chapter-control { width: 340px; }
+.chapter-labels { display: flex; justify-content: space-between; gap: 12px; }
+.chapter-labels button { white-space: nowrap; padding: 0 0 7px; }
+.chapter-labels span { font-family: var(--font-mono); font-size: 9px; opacity: 0.7; }
+.chapter-labels button[aria-current] { color: #e6edf5; }
+.chapter-scrubber { appearance: none; display: block; width: 100%; height: 3px; border-radius: 8px; cursor: pointer; }
+.chapter-scrubber::-webkit-slider-thumb { appearance: none; width: 9px; height: 9px; background: #e6edf5; border-radius: 50%; }
+.chapter-scrubber::-moz-range-thumb { width: 9px; height: 9px; border: 0; background: #e6edf5; border-radius: 50%; }
+.scenario-control { display: flex; gap: 3px; padding-left: 16px; border-left: 1px solid #ffffff15; }
+.scenario-control button { padding: 8px 10px; border-radius: 999px; white-space: nowrap; }
+.scenario-control button[aria-pressed="true"] { color: #7dd3fc; background: #38bdf814; }
+.scenario-control button:last-child[aria-pressed="true"] { color: #fda4af; background: #f43f5e18; }
+@media (max-width: 720px) {
+  .playback-pill { width: min(430px, calc(100vw - 24px)); flex-wrap: wrap; gap: 12px; border-radius: 24px; padding: 14px; }
+  .chapter-control { width: auto; flex: 1; min-width: 0; }
+  .chapter-labels { gap: 7px; }
+  .scenario-control { justify-content: center; width: 100%; padding-left: 0; border-left: 0; }
+}
+
 /* Film grain, fixed and inert */
 .grain::after {
   content: '';

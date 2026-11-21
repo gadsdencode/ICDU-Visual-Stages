@@ -28,3 +28,11 @@ The static-only restriction above applied to the first pass. Auto-play a smooth,
 4. AUDIT (10.5–14s): Output and synchronized pulses along both lineage arcs converge at AUDIT, forging an emerald seal with a stamp ripple.
 
 Cross-fade the top-left Act headline at every phase. Remain frontend-only with no bottom controls.
+
+## Playback controls and Violation flow — third pass
+
+Supersedes the earlier no-controls restriction: add one semi-transparent floating pill centered at bottom: 28px with backdrop-blur-md. Include Play/Pause, a seekable four-chapter timeline (01 Define, 02 Gate, 03 Execute, 04 Audit), and Compliant (Pass) / Violation (Block).
+
+Violation mode: Gate scan flashes amber then crimson (#F43F5E), a solid crimson barrier slams shut, and the capsule follows the dotted deflection path into Quarantine at y=655 without entering Execute. A crimson rejection pulse travels along Gate's overhead lineage arc into Audit. Audit records rejection, not a verified seal.
+
+Chapter seeks preserve playback state. Scenario changes restart at Define while preserving play/pause state.

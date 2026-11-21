@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
-import { createPassTimeline } from './passTimeline';
+import { createPassTimeline, type Scenario } from './passTimeline';
+import type gsap from 'gsap';
 
 const C = '#38BDF8';
 const E = '#10B981';
@@ -51,12 +52,18 @@ function StationLabel({ x, n, name, sub, color }: { x: number; n: string; name: 
   );
 }
 
-export default function Stage() {
+export default function Stage({ scenario, onReady, onTime }: {
+  scenario: Scenario;
+  onReady: (timeline: gsap.core.Timeline | null) => void;
+  onTime: (time: number) => void;
+}) {
   const stage = useRef<SVGSVGElement>(null);
   useLayoutEffect(() => {
     if (!stage.current) return;
-    return createPassTimeline(stage.current);
-  }, []);
+    const animation = createPassTimeline(stage.current, scenario, onTime);
+    onReady(animation.timeline);
+    return () => { onReady(null); animation.dispose(); };
+  }, [scenario, onReady, onTime]);
   const ticks = Array.from({ length: 72 }, (_, i) => i * 5);
   return (
     <svg
@@ -186,9 +193,9 @@ export default function Stage() {
         </text>
         {[
           ['AI, guided by ', 'intent.', 'ACT I — DEFINE · GOAL, RULES, CRITERIA'],
-          ['Every intent, ', 'verified.', 'ACT II — GATE · SCAN, VERIFY, RELEASE'],
-          ['Intelligence, ', 'contained.', 'ACT III — EXECUTE · ANY MODEL, WITHIN GUARDRAILS'],
-          ['Every outcome, ', 'accountable.', 'ACT IV — AUDIT · LINEAGE BECOMES EVIDENCE'],
+          ['Every intent, ', scenario === 'block' ? 'checked.' : 'verified.', scenario === 'block' ? 'ACT II — GATE · VIOLATION DETECTED' : 'ACT II — GATE · SCAN, VERIFY, RELEASE'],
+          [scenario === 'block' ? 'Violation, ' : 'Intelligence, ', 'contained.', scenario === 'block' ? 'ACT III — QUARANTINED · EXECUTION SKIPPED' : 'ACT III — EXECUTE · ANY MODEL, WITHIN GUARDRAILS'],
+          ['Every outcome, ', 'accountable.', scenario === 'block' ? 'ACT IV — AUDIT · REJECTION RECORDED' : 'ACT IV — AUDIT · LINEAGE BECOMES EVIDENCE'],
         ].map(([lead, emphasis, caption], i) => (
           <g key={caption} className={`act act-${i}`} opacity={i === 0 ? 1 : 0}>
             <text x="64" y="128" fontFamily={SANS} fontSize={46} fontWeight={300} letterSpacing={-1.2} fill={INK}>
@@ -327,6 +334,7 @@ export default function Stage() {
         <text x="552" y="401" textAnchor="end" fontFamily={MONO} fontSize={9} letterSpacing={1.5} fill={A} fillOpacity="0.55">0.973</text>
         </g>
         <text className="gate-pass" opacity="0" x="650" y="410" fill={E} fontFamily={MONO} fontSize="10" letterSpacing="2">PASS</text>
+        <rect className="energy-barrier" x="604" y="315" width="12" height="180" fill={R} filter="url(#glowHard)" opacity="0" />
         <text x="610" y="296" textAnchor="middle" fontFamily={MONO} fontSize={9} letterSpacing={2} fill={DIM}>APERTURE 180</text>
       </g>
       <StationLabel x={610} n="02" name="GATE" sub="out-of-policy intent stops" color={A} />
@@ -334,6 +342,7 @@ export default function Stage() {
       {/* Deflection path + Quarantine */}
       <g>
         <path
+          id="quarantine-path"
           d="M624,430 C690,440 708,520 700,580 C694,628 660,655 632,655"
           fill="none"
           stroke={R}
@@ -413,6 +422,12 @@ export default function Stage() {
         <text x="1300" y="415" fontFamily={MONO} fontSize={9} letterSpacing={1} fill={DIM}>14:02:37.418Z</text>
       </g>
       <StationLabel x={1210} n="04" name="AUDIT" sub="evidence, sealed" color={E} />
+      <g className="rejection-seal" opacity="0">
+        <polygon points={hex(1210, 405, 68)} fill="#250B15" stroke={R} strokeWidth="2" filter="url(#glowHard)" />
+        <path d="M1194 389l32 32m0-32-32 32" stroke="#FDA4AF" strokeWidth="3" />
+        <text x="1210" y="450" textAnchor="middle" fill={R} fontFamily={MONO} fontSize="9" letterSpacing="2">REJECTED</text>
+      </g>
+      <circle className="quarantine-ripple" cx="610" cy="655" r="20" fill="none" stroke={R} opacity="0" />
       <circle className="stamp-ripple" cx="1210" cy="405" r="68" fill="none" stroke={E} strokeWidth="2" opacity="0" />
       <g className="intent-capsule" opacity="0" filter="url(#glowHard)">
         <polygon points={hex(310, 405, 24)} fill="#092B3D" stroke={C} strokeWidth="2" />
