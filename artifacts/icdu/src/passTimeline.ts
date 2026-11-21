@@ -8,7 +8,7 @@ export function createPassTimeline(stage: SVGSVGElement, scenario: Scenario, onU
   let timeline!: gsap.core.Timeline;
   const blocked = scenario === 'block';
   const ctx = gsap.context(() => {
-    const tl = gsap.timeline({ repeat: -1, defaults: { ease: 'power2.inOut' } });
+    const tl = gsap.timeline({ repeat: -1, defaults: { ease: 'power3.inOut' } });
     timeline = tl;
     tl.eventCallback('onUpdate', () => onUpdate(tl.time()));
     tl.addLabel('define', 0).addLabel('gate', 3.5).addLabel('execute', 7).addLabel('audit', 10.5);
@@ -39,9 +39,9 @@ export function createPassTimeline(stage: SVGSVGElement, scenario: Scenario, onU
     });
     stage.querySelectorAll<SVGPathElement>('.intent-ring').forEach((ring, i) => {
       tl.set(ring, { rotation: (i % 2 ? -1 : 1) * 90, scale: 1.25, opacity: 0.2, svgOrigin: '310 405' }, 0)
-        .to(ring, { rotation: 0, scale: 1, opacity: 1, duration: 0.65, ease: 'back.out(1.5)' }, 2.15 + i * 0.16);
+        .to(ring, { rotation: 0, scale: 1, opacity: 1, duration: 0.65, ease: 'expo.out' }, 2.15 + i * 0.16);
     });
-    tl.to('.intent-capsule', { opacity: 1, scale: 1, duration: 0.55, ease: 'back.out(1.7)' }, 2.65)
+    tl.to('.intent-capsule', { opacity: 1, scale: 1, duration: 0.55, ease: 'expo.out' }, 2.65)
       .to('.intent-capsule', { x: 300, duration: 0.85 }, 3.5)
       .to('.scan-beam', { opacity: 1, duration: 0.15 }, 4.35)
       .to('.scan-beam', { y: 70, duration: 1.05, ease: 'sine.inOut' }, 4.5);
@@ -51,17 +51,17 @@ export function createPassTimeline(stage: SVGSVGElement, scenario: Scenario, onU
       .to('.shutter-top', { y: -8, duration: 0.55 }, 5.75)
       .to('.shutter-bottom', { y: 8, duration: 0.55 }, 5.75)
       .to('.scan-beam', { opacity: 0, duration: 0.3 }, 6.05)
-      .to('.intent-capsule', { x: 600, duration: 1.05, ease: 'power2.in' }, 6.3)
+      .to('.intent-capsule', { x: 600, duration: 1.05, ease: 'power3.in' }, 6.3)
       .to('.intent-capsule', { opacity: 0, scale: 0.3, duration: 0.3 }, 7.35)
-      .to('.bracket-left', { x: 22, duration: 0.45, ease: 'power3.out' }, 7.4)
-      .to('.bracket-right', { x: -22, duration: 0.45, ease: 'power3.out' }, 7.4)
+      .to('.bracket-left', { x: 22, duration: 0.45, ease: 'expo.out' }, 7.4)
+      .to('.bracket-right', { x: -22, duration: 0.45, ease: 'expo.out' }, 7.4)
       .to('.model-core', { opacity: 1, duration: 0.3 }, 7.4)
       .to('.model-core', { scale: 1.08, duration: 0.4, repeat: 5, yoyo: true, ease: 'sine.inOut' }, 7.8)
       .to('.energy-arcs', { opacity: 1, duration: 0.25 }, 7.65)
       .to('.energy-arcs', { rotation: 720, duration: 2.65, ease: 'none' }, 7.8)
       .to('.energy-arcs', { opacity: 0, duration: 0.25 }, 10.25)
       .to('.output-packet', { opacity: 1, duration: 0.2 }, 10.5)
-      .to('.output-packet', { x: 300, duration: 1.65, ease: 'power2.inOut' }, 10.5);
+      .to('.output-packet', { x: 300, duration: 1.65, ease: 'power3.inOut' }, 10.5);
 
     // Sample the actual SVG curves, so pulses stay aligned at every viewport size.
     ['define', 'gate'].forEach((name) => {
@@ -74,14 +74,14 @@ export function createPassTimeline(stage: SVGSVGElement, scenario: Scenario, onU
       });
       tl.to(pulse, { opacity: 1, duration: 0.1 }, 10.5)
         .fromTo(pulse, { x: points[0].x, y: points[0].y }, {
-          motionPath: { path: points, curviness: 0 }, duration: 1.35, ease: 'sine.inOut',
+          motionPath: { path: points, curviness: 0 }, duration: 1.35, ease: 'power3.inOut',
         }, 10.5)
         .to(pulse, { opacity: 0, duration: 0.1 }, 11.85);
     });
     tl.fromTo('.lineage-drop', { y: 0 }, { opacity: 1, y: 90, duration: 0.3, ease: 'power2.in' }, 11.85)
       .to('.lineage-drop, .output-packet', { opacity: 0, duration: 0.12 }, 12.15)
-      .fromTo('.audit-seal', { scale: 0.88 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2.5)' }, 12.15)
-      .fromTo('.stamp-ripple', { scale: 0.9, opacity: 1 }, { scale: 1.8, opacity: 0, duration: 0.7, ease: 'power2.out' }, 12.15);
+      .fromTo('.audit-seal', { scale: 0.88 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'expo.out' }, 12.15)
+      .fromTo('.stamp-ripple', { scale: 0.9, opacity: 1 }, { scale: 1.8, opacity: 0, duration: 0.7, ease: 'expo.out' }, 12.15);
     } else {
       const path = stage.querySelector<SVGPathElement>('#quarantine-path')!;
       const length = path.getTotalLength();
@@ -95,12 +95,12 @@ export function createPassTimeline(stage: SVGSVGElement, scenario: Scenario, onU
       tl.set('.lineage-gate, .lineage-drop', { fill: '#F43F5E' }, 0)
         .to('.scan-beam', { opacity: 0.25, duration: 0.09, repeat: 3, yoyo: true }, 5.25)
         .to('.scan-light', { stroke: '#F43F5E', duration: 0.12 }, 5.55)
-        .fromTo('.energy-barrier', { scaleY: 0, svgOrigin: '610 405' }, { scaleY: 1, opacity: 1, duration: 0.18, ease: 'power4.out' }, 5.65)
+        .fromTo('.energy-barrier', { scaleY: 0, svgOrigin: '610 405' }, { scaleY: 1, opacity: 1, duration: 0.18, ease: 'expo.out' }, 5.65)
         .to('.shutter-top', { y: 65, duration: 0.15 }, 5.65)
         .to('.shutter-bottom', { y: -65, duration: 0.15 }, 5.65)
         .to('.intent-capsule polygon', { stroke: '#F43F5E', fill: '#430F1D', duration: 0.2 }, 5.65)
         .to('.scan-beam', { opacity: 0, duration: 0.25 }, 5.85)
-        .to('.intent-capsule', { motionPath: { path: points, curviness: 0 }, duration: 1.6, ease: 'power2.inOut' }, 5.9)
+        .to('.intent-capsule', { motionPath: { path: points, curviness: 0 }, duration: 1.6, ease: 'power3.inOut' }, 5.9)
         .fromTo('.quarantine-ripple', { scale: 0.7, svgOrigin: '610 655' }, { scale: 2.2, opacity: 0.9, duration: 0.2 }, 7.5)
         .to('.quarantine-ripple', { scale: 3, opacity: 0, duration: 0.5 }, 7.7)
         .to('.intent-capsule', { scale: 0.45, opacity: 0, duration: 0.4 }, 7.55);
@@ -116,7 +116,7 @@ export function createPassTimeline(stage: SVGSVGElement, scenario: Scenario, onU
         .fromTo('.lineage-drop', { y: 0 }, { opacity: 1, y: 90, duration: 0.3 }, 7.5)
         .to('.lineage-drop', { opacity: 0, duration: 0.1 }, 7.8)
         .to('.audit-seal', { opacity: 0, duration: 0.15 }, 7.8)
-        .fromTo('.rejection-seal', { scale: 0.85, svgOrigin: '1210 405' }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)' }, 7.8)
+        .fromTo('.rejection-seal', { scale: 0.85, svgOrigin: '1210 405' }, { scale: 1, opacity: 1, duration: 0.4, ease: 'expo.out' }, 7.8)
         .to('.rejection-seal, .energy-barrier', { opacity: 0, duration: 0.5 }, 13.5);
     }
     [3.5, 7, 10.5].forEach((time, i) => {

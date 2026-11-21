@@ -7,9 +7,10 @@ type Props = {
   onPlayPause: () => void;
   onSeek: (time: number) => void;
   onScenario: (scenario: Scenario) => void;
+  onHide: () => void;
 };
 
-export default function Controls({ playing, time, scenario, onPlayPause, onSeek, onScenario }: Props) {
+export default function Controls({ playing, time, scenario, onPlayPause, onSeek, onScenario, onHide }: Props) {
   const chapter = Math.min(3, Math.floor(time / 3.5));
   return (
     <section className="playback-pill backdrop-blur-md" aria-label="Animation controls">
@@ -39,6 +40,7 @@ export default function Controls({ playing, time, scenario, onPlayPause, onSeek,
         <button aria-pressed={scenario === 'pass'} onClick={() => onScenario('pass')}>Compliant (Pass)</button>
         <button aria-pressed={scenario === 'block'} onClick={() => onScenario('block')}>Violation (Block)</button>
       </div>
+      <button className="hide-ui-button" onClick={onHide} aria-keyshortcuts="H" title="Hide controls for recording. Press H again to restore.">Hide UI <span>(H)</span></button>
     </section>
   );
 }

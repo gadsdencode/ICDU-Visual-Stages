@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { createPassTimeline, type Scenario } from './passTimeline';
 import type gsap from 'gsap';
 
@@ -52,7 +52,7 @@ function StationLabel({ x, n, name, sub, color }: { x: number; n: string; name: 
   );
 }
 
-export default function Stage({ scenario, onReady, onTime }: {
+function Stage({ scenario, onReady, onTime }: {
   scenario: Scenario;
   onReady: (timeline: gsap.core.Timeline | null) => void;
   onTime: (time: number) => void;
@@ -70,7 +70,7 @@ export default function Stage({ scenario, onReady, onTime }: {
       ref={stage}
       viewBox="0 0 1440 810"
       preserveAspectRatio="xMidYMid meet"
-      className="block h-full w-full"
+      className="icdu-stage"
       role="img"
       aria-labelledby="icdu-title icdu-desc"
     >
@@ -460,3 +460,6 @@ export default function Stage({ scenario, onReady, onTime }: {
     </svg>
   );
 }
+
+// Scrubber updates must not rerender the SVG or disturb its GSAP transforms.
+export default memo(Stage);

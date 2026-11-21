@@ -36,3 +36,9 @@ Supersedes the earlier no-controls restriction: add one semi-transparent floatin
 Violation mode: Gate scan flashes amber then crimson (#F43F5E), a solid crimson barrier slams shut, and the capsule follows the dotted deflection path into Quarantine at y=655 without entering Execute. A crimson rejection pulse travels along Gate's overhead lineage arc into Audit. Audit records rejection, not a verified seal.
 
 Chapter seeks preserve playback state. Scenario changes restart at Define while preserving play/pause state.
+
+## Cinematic polish and recording
+
+Use power3.inOut for weighted travel and expo.out for mechanical settling and seal impacts. Preserve the 14-second clock and gentle sine core pulses. Fit the full 16:9 SVG inside laptop and ultrawide viewports without stretching or cropping.
+
+Hide UI (H) removes the entire bottom pill for screen recording; H restores it without restarting or pausing playback. Ignore repeated keys, modifier shortcuts, and text-editing fields.
